@@ -1,19 +1,21 @@
 package com.example.instructorapi.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
 public class CreateInstructorRequest {
+
+    @NotBlank(message = "Name is required")
     private String name;
+    @NotBlank(message = "Email is required")
     private String email;
+    @NotBlank(message = "Specialization is required")
     private String specialization;
+    @NotBlank(message = "Years of experience is required")
+    @Min(value = 0, message = "Years of experience must be at least 0")
     private int yearsExperience;
 
     public CreateInstructorRequest() {}
-
-    public CreateInstructorRequest(String name, String email, String specialization, int yearsExperience) {
-        this.name = name;
-        this.email = email;
-        this.specialization = specialization;
-        this.yearsExperience = yearsExperience;
-    }
 
     public String getName() { return name; }
     public String getEmail() { return email; }

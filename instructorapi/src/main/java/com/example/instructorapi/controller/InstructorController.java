@@ -3,6 +3,9 @@ package com.example.instructorapi.controller;
 import com.example.instructorapi.dto.CreateInstructorRequest;
 import com.example.instructorapi.model.Instructor;
 import com.example.instructorapi.service.InstructorService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +26,7 @@ public class InstructorController {
     }
 
     @PostMapping
-    public Instructor create(@RequestBody CreateInstructorRequest request) {
+    public Instructor create(@Valid @RequestBody CreateInstructorRequest request) {
         return instructorService.createInstructor(request);
     }
 }
