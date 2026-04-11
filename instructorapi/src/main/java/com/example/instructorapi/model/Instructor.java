@@ -1,6 +1,7 @@
 package com.example.instructorapi.model;
 
-public class InstructorModel {
+public class Instructor {
+
     private String name;
     private String email;
     private String specialization;
@@ -12,5 +13,9 @@ public class InstructorModel {
         this.specialization = specialization;
         this.yearsExperience = yearsExperience;
     }
- 
+
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public String getSpecialization() { return specialization; }
+    public int getYearsExperience() { return yearsExperience; }
 }
