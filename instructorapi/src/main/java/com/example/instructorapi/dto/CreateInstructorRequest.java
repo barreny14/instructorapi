@@ -2,6 +2,7 @@ package com.example.instructorapi.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class CreateInstructorRequest {
 
@@ -11,9 +12,9 @@ public class CreateInstructorRequest {
     private String email;
     @NotBlank(message = "Specialization is required")
     private String specialization;
-    @NotBlank(message = "Years of experience is required")
+    @NotNull(message = "Years of experience is required")
     @Min(value = 0, message = "Years of experience must be at least 0")
-    private int yearsExperience;
+    private Integer yearsExperience;
 
     public CreateInstructorRequest() {}
 

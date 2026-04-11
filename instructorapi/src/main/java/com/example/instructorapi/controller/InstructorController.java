@@ -1,6 +1,7 @@
 package com.example.instructorapi.controller;
 
 import com.example.instructorapi.dto.CreateInstructorRequest;
+import org.springframework.web.bind.annotation.PostMapping;
 import com.example.instructorapi.model.Instructor;
 import com.example.instructorapi.service.InstructorService;
 
