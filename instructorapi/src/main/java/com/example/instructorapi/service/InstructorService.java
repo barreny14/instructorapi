@@ -22,8 +22,9 @@ public class InstructorService {
         this.instructorRepository = instructorRepository;
     }
 
-    public List<Instructor> getInstructorsBySpecialization(String specialization) {
-        return instructorRepository.findBySpecialization(specialization);
+    // Fix: Updated to return Page if you want to support pagination here too
+    public Page<Instructor> getInstructorsBySpecialization(String specialization, Pageable pageable) {
+        return instructorRepository.findBySpecialization(specialization, pageable);
     }
 
     public Optional<Instructor> getInstructorById(String id) {
@@ -55,15 +56,22 @@ public class InstructorService {
     }
 
     public List<Instructor> getAllInstructors() {
-        throw new UnsupportedOperationException("Unimplemented method 'getAllInstructors'");
+        return instructorRepository.findAll();
     }
 
-    public Page<Instructor> getAllInstructorsPagedAndSorted(int page, int size, String sortField, String direction) {
+    public Page<Instructor> getInstructors(String keyword, String specialization, int page, int size, String sortField, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? 
                     Sort.by(sortField).descending() : 
                     Sort.by(sortField).ascending();
         
         Pageable pageable = PageRequest.of(page, size, sort);
-        return instructorRepository.findAll(pageable);
+
+        if (keyword != null && !keyword.isEmpty()) {
+            return instructorRepository.findByNameContainingIgnoreCase(keyword, pageable);
+        } else if (specialization != null && !specialization.isEmpty()) {
+            return instructorRepository.findBySpecialization(specialization, pageable);
+        } else {
+            return instructorRepository.findAll(pageable);
+        }
     }
 }

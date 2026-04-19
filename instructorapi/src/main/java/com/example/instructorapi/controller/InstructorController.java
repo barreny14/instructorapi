@@ -20,18 +20,20 @@ public class InstructorController {
     }
 
     @GetMapping
-    public Page<Instructor> getAll(
+    public Page<Instructor> getInstructors(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String specialization,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "name,asc") String sort) {
-        
+
         String[] sortParts = sort.split(",");
         String sortField = sortParts[0];
         String sortDirection = (sortParts.length > 1) ? sortParts[1] : "asc";
 
-        return instructorService.getAllInstructorsPagedAndSorted(page, size, sortField, sortDirection);
+        return instructorService.getInstructors(keyword, specialization, page, size, sortField, sortDirection);
     }
-
+    
     @GetMapping("/{id}")
     public Instructor getById(@PathVariable String id) {
         return instructorService.getInstructorById(id).orElseThrow(() -> new RuntimeException("Instructor not found with id: " + id));
