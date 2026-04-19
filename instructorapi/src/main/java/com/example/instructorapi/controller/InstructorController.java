@@ -21,12 +21,15 @@ public class InstructorController {
 
     @GetMapping
     public Page<Instructor> getAll(
-            @RequestParam(required = false) String specialization,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "name,asc") String sort) {
         
-        if (specialization != null && !specialization.isEmpty()) {}
-        return instructorService.getAllInstructorsPaged(page, size);
+        String[] sortParts = sort.split(",");
+        String sortField = sortParts[0];
+        String sortDirection = (sortParts.length > 1) ? sortParts[1] : "asc";
+
+        return instructorService.getAllInstructorsPagedAndSorted(page, size, sortField, sortDirection);
     }
 
     @GetMapping("/{id}")

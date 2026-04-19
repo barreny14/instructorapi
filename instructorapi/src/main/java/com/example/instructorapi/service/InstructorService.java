@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,8 +58,12 @@ public class InstructorService {
         throw new UnsupportedOperationException("Unimplemented method 'getAllInstructors'");
     }
 
-    public Page<Instructor> getAllInstructorsPaged(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<Instructor> getAllInstructorsPagedAndSorted(int page, int size, String sortField, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? 
+                    Sort.by(sortField).descending() : 
+                    Sort.by(sortField).ascending();
+        
+        Pageable pageable = PageRequest.of(page, size, sort);
         return instructorRepository.findAll(pageable);
-}
+    }
 }
