@@ -6,9 +6,8 @@ import com.example.instructorapi.service.InstructorService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/instructors")
@@ -21,11 +20,13 @@ public class InstructorController {
     }
 
     @GetMapping
-    public List<Instructor> getAll(@RequestParam(required = false) String specialization) {
-        if (specialization != null && !specialization.isEmpty()) {
-            return instructorService.getInstructorsBySpecialization(specialization);
-        }
-        return instructorService.getAllInstructors();
+    public Page<Instructor> getAll(
+            @RequestParam(required = false) String specialization,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        
+        if (specialization != null && !specialization.isEmpty()) {}
+        return instructorService.getAllInstructorsPaged(page, size);
     }
 
     @GetMapping("/{id}")

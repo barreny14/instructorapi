@@ -4,6 +4,9 @@ import com.example.instructorapi.dto.CreateInstructorRequest;
 import com.example.instructorapi.model.Instructor;
 import com.example.instructorapi.repository.InstructorRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,4 +56,9 @@ public class InstructorService {
     public List<Instructor> getAllInstructors() {
         throw new UnsupportedOperationException("Unimplemented method 'getAllInstructors'");
     }
+
+    public Page<Instructor> getAllInstructorsPaged(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return instructorRepository.findAll(pageable);
+}
 }
