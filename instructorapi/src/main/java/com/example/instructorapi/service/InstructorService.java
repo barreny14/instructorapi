@@ -10,11 +10,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Sort;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class InstructorService {
+
+    private static final Logger logger = LoggerFactory.getLogger(InstructorService.class);
 
     private final InstructorRepository instructorRepository;
 
@@ -22,7 +27,28 @@ public class InstructorService {
         this.instructorRepository = instructorRepository;
     }
 
-    // Fix: Updated to return Page if you want to support pagination here too
+    public Page<Instructor> getInstructors(String keyword, String specialization, int page, int size, String sortField, String direction) {
+        logger.info("Fetching instructors with parameters - Keyword: {}, Specialization: {}, Page: {}, Size: {}, Sort: {}, Direction: {}", 
+                     keyword, specialization, page, size, sortField, direction);
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? 
+                    Sort.by(sortField).descending() : 
+                    Sort.by(sortField).ascending();
+        
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        if (keyword != null && !keyword.isEmpty()) {
+            logger.debug("Executing search by name containing: {}", keyword);
+            return instructorRepository.findByNameContainingIgnoreCase(keyword, pageable);
+        } else if (specialization != null && !specialization.isEmpty()) {
+            logger.debug("Executing filter by specialization: {}", specialization);
+            return instructorRepository.findBySpecialization(specialization, pageable);
+        } else {
+            logger.debug("Executing fetch all with pagination");
+            return instructorRepository.findAll(pageable);
+        }
+    }
+
     public Page<Instructor> getInstructorsBySpecialization(String specialization, Pageable pageable) {
         return instructorRepository.findBySpecialization(specialization, pageable);
     }
@@ -57,21 +83,5 @@ public class InstructorService {
 
     public List<Instructor> getAllInstructors() {
         return instructorRepository.findAll();
-    }
-
-    public Page<Instructor> getInstructors(String keyword, String specialization, int page, int size, String sortField, String direction) {
-        Sort sort = direction.equalsIgnoreCase("desc") ? 
-                    Sort.by(sortField).descending() : 
-                    Sort.by(sortField).ascending();
-        
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        if (keyword != null && !keyword.isEmpty()) {
-            return instructorRepository.findByNameContainingIgnoreCase(keyword, pageable);
-        } else if (specialization != null && !specialization.isEmpty()) {
-            return instructorRepository.findBySpecialization(specialization, pageable);
-        } else {
-            return instructorRepository.findAll(pageable);
-        }
     }
 }

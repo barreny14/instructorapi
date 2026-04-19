@@ -2,18 +2,21 @@ package com.example.instructorapi.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 @Document(collection = "instructors")
 public class Instructor {
 
     @Id
     private String id;
-    private String name;
+    
     private String email;
     private String specialization;
     private int yearsExperience;
 
-    // Constructors
+    @Indexed
+    private String name;
+
     public Instructor() {}
 
     public Instructor(String name, String email, String specialization, int yearsExperience) {
