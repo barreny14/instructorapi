@@ -18,8 +18,8 @@ public class InstructorService {
         this.instructorRepository = instructorRepository;
     }
 
-    public List<Instructor> searchByName(String keyword) {
-        return instructorRepository.findByNameContainingIgnoreCase(keyword);
+    public List<Instructor> getInstructorsBySpecialization(String specialization) {
+        return instructorRepository.findBySpecialization(specialization);
     }
 
     public Optional<Instructor> getInstructorById(String id) {
@@ -48,5 +48,9 @@ public class InstructorService {
 
     public void deleteInstructor(String id) {
         instructorRepository.deleteById(id);
+    }
+
+    public List<Instructor> getAllInstructors() {
+        throw new UnsupportedOperationException("Unimplemented method 'getAllInstructors'");
     }
 }

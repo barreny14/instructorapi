@@ -9,4 +9,6 @@ import java.util.List;
 public interface InstructorRepository extends MongoRepository<Instructor, String> {
     
     List<Instructor> findByNameContainingIgnoreCase(String keyword);
+
+    List<Instructor> findBySpecialization(String specialization);
 }

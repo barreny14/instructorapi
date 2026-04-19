@@ -20,9 +20,12 @@ public class InstructorController {
         this.instructorService = instructorService;
     }
 
-    @GetMapping("/search")
-    public List<Instructor> search(@RequestParam String keyword) {
-        return instructorService.searchByName(keyword);
+    @GetMapping
+    public List<Instructor> getAll(@RequestParam(required = false) String specialization) {
+        if (specialization != null && !specialization.isEmpty()) {
+            return instructorService.getInstructorsBySpecialization(specialization);
+        }
+        return instructorService.getAllInstructors();
     }
 
     @GetMapping("/{id}")

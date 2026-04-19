@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Instructor {
 
     @Id
-    private String id; // MongoDB will automatically manage this
+    private String id;
     private String name;
     private String email;
     private String specialization;
@@ -23,7 +23,6 @@ public class Instructor {
         this.yearsExperience = yearsExperience;
     }
 
-    // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     
