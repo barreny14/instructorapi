@@ -2,35 +2,51 @@ package com.example.instructorapi.service;
 
 import com.example.instructorapi.dto.CreateInstructorRequest;
 import com.example.instructorapi.model.Instructor;
+import com.example.instructorapi.repository.InstructorRepository;
+
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InstructorService {
 
-    private final List<Instructor> instructors = new ArrayList<>();
+    private final InstructorRepository instructorRepository;
 
-    public InstructorService() {
-        instructors.add(new Instructor("Ali", "ali@email.com", "Java", 5));
-        instructors.add(new Instructor("Sara", "sara@email.com", "Spring Boot", 3));
+    public InstructorService(InstructorRepository instructorRepository) {
+        this.instructorRepository = instructorRepository;
     }
 
-    public List<Instructor> getAllInstructors() {
-        return instructors;
+    public List<Instructor> searchByName(String keyword) {
+        return instructorRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
+    public Optional<Instructor> getInstructorById(String id) {
+        return instructorRepository.findById(id);
     }
 
     public Instructor createInstructor(CreateInstructorRequest request) {
-
         Instructor instructor = new Instructor(
                 request.getName(),
                 request.getEmail(),
                 request.getSpecialization(),
                 request.getYearsExperience()
         );
+        return instructorRepository.save(instructor);
+    }
 
-        instructors.add(instructor);
-        return instructor;
+    public Instructor updateInstructor(String id, CreateInstructorRequest request) {
+        return instructorRepository.findById(id).map(existing -> {
+            existing.setName(request.getName());
+            existing.setEmail(request.getEmail());
+            existing.setSpecialization(request.getSpecialization());
+            existing.setYearsExperience(request.getYearsExperience());
+            return instructorRepository.save(existing);
+        }).orElseThrow(() -> new RuntimeException("Instructor not found with id: " + id));
+    }
+
+    public void deleteInstructor(String id) {
+        instructorRepository.deleteById(id);
     }
 }

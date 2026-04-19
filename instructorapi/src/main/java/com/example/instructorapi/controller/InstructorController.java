@@ -1,7 +1,6 @@
 package com.example.instructorapi.controller;
 
 import com.example.instructorapi.dto.CreateInstructorRequest;
-import org.springframework.web.bind.annotation.PostMapping;
 import com.example.instructorapi.model.Instructor;
 import com.example.instructorapi.service.InstructorService;
 
@@ -21,13 +20,28 @@ public class InstructorController {
         this.instructorService = instructorService;
     }
 
-    @GetMapping
-    public List<Instructor> getAll() {
-        return instructorService.getAllInstructors();
+    @GetMapping("/search")
+    public List<Instructor> search(@RequestParam String keyword) {
+        return instructorService.searchByName(keyword);
+    }
+
+    @GetMapping("/{id}")
+    public Instructor getById(@PathVariable String id) {
+        return instructorService.getInstructorById(id).orElseThrow(() -> new RuntimeException("Instructor not found with id: " + id));
     }
 
     @PostMapping
     public Instructor create(@Valid @RequestBody CreateInstructorRequest request) {
         return instructorService.createInstructor(request);
+    }
+
+    @PutMapping("/{id}")
+    public Instructor update(@PathVariable String id, @Valid @RequestBody CreateInstructorRequest request) {
+        return instructorService.updateInstructor(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        instructorService.deleteInstructor(id);
     }
 }
