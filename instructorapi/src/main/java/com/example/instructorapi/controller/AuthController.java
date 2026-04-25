@@ -1,5 +1,7 @@
 package com.example.instructorapi.controller;
 
+import com.example.instructorapi.dto.AuthResponse;
+import com.example.instructorapi.dto.LoginRequest;
 import com.example.instructorapi.dto.RegisterRequest;
 import com.example.instructorapi.service.AuthService;
 import jakarta.validation.Valid;
@@ -21,5 +23,10 @@ public class AuthController {
     public String register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
         return "User registered successfully!";
+    }
+
+    @PostMapping("/login")
+    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 }
