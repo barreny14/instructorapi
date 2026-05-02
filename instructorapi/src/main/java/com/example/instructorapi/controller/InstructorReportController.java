@@ -1,5 +1,6 @@
 package com.example.instructorapi.controller;
 
+import com.example.instructorapi.dto.InstructorSpecializationSummary;
 import com.example.instructorapi.dto.InstructorStatusSummary;
 import com.example.instructorapi.service.InstructorReportService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,5 +22,10 @@ public class InstructorReportController {
     @GetMapping("/by-status")
     public List<InstructorStatusSummary> getInstructorsByStatus() {
         return reportService.getInstructorCountByStatus();
+    }
+
+    @GetMapping("/by-specialization")
+    public List<InstructorSpecializationSummary> getInstructorsBySpecialization() {
+        return reportService.getInstructorCountBySpecialization();
     }
 }

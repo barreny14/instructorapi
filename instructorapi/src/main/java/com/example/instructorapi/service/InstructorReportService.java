@@ -1,5 +1,6 @@
 package com.example.instructorapi.service;
 
+import com.example.instructorapi.dto.InstructorSpecializationSummary;
 import com.example.instructorapi.dto.InstructorStatusSummary;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,7 +23,6 @@ public class InstructorReportService {
 
     public List<InstructorStatusSummary> getInstructorCountByStatus() {
         Aggregation aggregation = newAggregation(
-            // 1. GROUP by the 'status' field and COUNT the occurrences
             group("status").count().as("totalInstructors"),
             project("totalInstructors").and("_id").as("status"),
             sort(Sort.Direction.ASC, "status")
@@ -32,4 +32,16 @@ public class InstructorReportService {
         );
         return results.getMappedResults();
     }
+
+    public List<InstructorSpecializationSummary> getInstructorCountBySpecialization() {
+        Aggregation aggregation = newAggregation(
+            group("specialization").count().as("totalInstructors"),
+            project("totalInstructors").and("_id").as("specialization"),
+            sort(Sort.Direction.ASC, "specialization")
+        );
+        return mongoTemplate.aggregate(
+            aggregation, "instructors", InstructorSpecializationSummary.class
+        ).getMappedResults();
+    }
+
 }

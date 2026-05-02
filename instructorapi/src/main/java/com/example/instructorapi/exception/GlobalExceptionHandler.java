@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice // Changed from @ControllerAdvice
+@RestControllerAdvice 
 public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
