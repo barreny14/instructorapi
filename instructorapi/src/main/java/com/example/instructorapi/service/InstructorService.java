@@ -62,7 +62,8 @@ public class InstructorService {
                 request.getName(),
                 request.getEmail(),
                 request.getSpecialization(),
-                request.getYearsExperience()
+                request.getYearsExperience(),
+                "ACTIVE" 
         );
         return instructorRepository.save(instructor);
     }
@@ -72,7 +73,10 @@ public class InstructorService {
             existing.setName(request.getName());
             existing.setEmail(request.getEmail());
             existing.setSpecialization(request.getSpecialization());
-            existing.setYearsExperience(request.getYearsExperience());
+            
+            // FIXED: Updated to use the newly named setter
+            existing.setYearsOfExperience(request.getYearsExperience()); 
+            
             return instructorRepository.save(existing);
         }).orElseThrow(() -> new RuntimeException("Instructor not found with id: " + id));
     }
