@@ -31,7 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        // Check if the header has a Bearer token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -40,16 +39,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
-        // If we have an email and the user isn't authenticated yet
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Check expiration and validity
             if (!jwtService.isTokenExpired(jwt)) {
+                String roleName = (String) jwtService.extractAllClaims(jwt).get("role");
+                var authorities = Collections.singletonList(
+                    new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + roleName)
+                );
+                
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userEmail, null, Collections.emptyList()
+                        userEmail, null, authorities
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+        
         filterChain.doFilter(request, response);
     }
 }
