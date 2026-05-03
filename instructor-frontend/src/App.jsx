@@ -1,7 +1,9 @@
-import './App.css'
+import { useState } from 'react';
+import './App.css';
+import InstructorList from './components/InstructorList';
 
 function App() {
-  const instructors = [
+  const [instructors, setInstructors] = useState([
     {
       id: "1",
       name: "Alice Johnson",
@@ -23,25 +25,19 @@ function App() {
       status: "INACTIVE",
       yearsOfExperience: 4
     }
-  ];
+  ]);
 
   return (
     <div className="container">
       <h1>Instructor Directory</h1>
       
-      {}
-      <div className="card-grid">
-        {instructors.map((instructor) => (
-          <div key={instructor.id} className="card">
-            <h2>{instructor.name}</h2>
-            <p><strong>Specialization:</strong> {instructor.specialization}</p>
-            <p><strong>Experience:</strong> {instructor.yearsOfExperience} years</p>
-            <p><strong>Status:</strong> {instructor.status}</p>
-          </div>
-        ))}
-      </div>
+      <p style={{ fontWeight: 'bold', marginBottom: '20px' }}>
+        Total instructors: {instructors.length}
+      </p>
+      
+      <InstructorList instructors={instructors} />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
