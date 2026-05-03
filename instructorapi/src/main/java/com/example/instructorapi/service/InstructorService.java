@@ -88,4 +88,8 @@ public class InstructorService {
     public List<Instructor> getAllInstructors() {
         return instructorRepository.findAll();
     }
+    
+    public List<Instructor> findAll() {
+        return instructorRepository.findAll(); 
+    }
 }

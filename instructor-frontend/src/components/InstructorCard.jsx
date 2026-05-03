@@ -4,7 +4,9 @@ function InstructorCard({ instructor }) {
       <h2>{instructor.name}</h2>
       <p><strong>Specialization:</strong> {instructor.specialization}</p>
       <p><strong>Experience:</strong> {instructor.yearsOfExperience} years</p>
-      <p><strong>Status:</strong> {instructor.status}</p>
+      <div className={`status-badge ${instructor.status.toLowerCase()}`}>
+        {instructor.status}
+      </div>
     </div>
   );
 }
