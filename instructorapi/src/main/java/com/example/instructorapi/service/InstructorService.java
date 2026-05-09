@@ -73,8 +73,6 @@ public class InstructorService {
             existing.setName(request.getName());
             existing.setEmail(request.getEmail());
             existing.setSpecialization(request.getSpecialization());
-            
-            // FIXED: Updated to use the newly named setter
             existing.setYearsOfExperience(request.getYearsExperience()); 
             
             return instructorRepository.save(existing);
@@ -88,7 +86,7 @@ public class InstructorService {
     public List<Instructor> getAllInstructors() {
         return instructorRepository.findAll();
     }
-    
+
     public List<Instructor> findAll() {
         return instructorRepository.findAll(); 
     }

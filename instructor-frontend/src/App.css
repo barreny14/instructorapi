@@ -60,7 +60,7 @@ body {
 
 .clear-btn {
   padding: 10px 15px;
-  background-color: #a01a2a; /* A nice red color */
+  background-color: #a01a2a; 
   color: white;
   border: none;
   border-radius: 5px;
@@ -69,4 +69,28 @@ body {
 
 .clear-btn:hover {
   background-color: #d90429;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.toolbar input {
+  flex: 1;
+  min-width: 240px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.sort-select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #2B3745;
+  cursor: pointer;
 }
