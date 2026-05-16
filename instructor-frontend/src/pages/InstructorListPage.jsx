@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllInstructors } from "../services/instructorApi"; 
+import { getAllInstructors, deleteInstructor } from "../services/instructorApi";
 
 function InstructorListPage() {
   const [instructors, setInstructors] = useState([]);
@@ -17,12 +17,9 @@ function InstructorListPage() {
     async function loadInstructors() {
       try {
         setLoading(true); 
-        
         const data = await getAllInstructors(currentPage);
-        
         setInstructors(data.content);
         setTotalPages(data.totalPages);
-
       } catch (err) {
         console.error(err);
         setError("Could not load instructors. Is Spring Boot running?");
@@ -30,9 +27,22 @@ function InstructorListPage() {
         setLoading(false);
       }
     }
-
     loadInstructors();
   }, [currentPage]); 
+
+  async function handleDelete(id) {
+    const isConfirmed = window.confirm("Are you sure you want to delete this instructor?");
+    if (!isConfirmed) return;
+
+    try {
+      await deleteInstructor(id);
+      setInstructors(instructors.filter((instructor) => instructor.id !== id));
+      
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete the instructor. Please try again.");
+    }
+  }
 
   if (loading) {
     return <h2>Loading instructors...</h2>;
@@ -58,19 +68,11 @@ function InstructorListPage() {
           <h1>Instructors</h1>
           <p>These instructors are loaded directly from your Spring Boot database!</p>
         </div>
-        
+
         {isAdmin && (
           <Link to="/instructors/create">
-            <button style={{ 
-              padding: '10px 20px', 
-              backgroundColor: '#10b981', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '5px', 
-              fontWeight: 'bold', 
-              cursor: 'pointer' 
-            }}>
-              + Create Instructor
+            <button style={{ padding: "10px 15px", backgroundColor: "#10b981", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}>
+              Create Instructor
             </button>
           </Link>
         )}
@@ -91,22 +93,18 @@ function InstructorListPage() {
               </Link>
 
               {isAdmin && (
-                <Link 
-                  to={`/instructors/${instructor.id}/edit`}
-                  style={{ 
-                    display: 'inline-block', 
-                    marginTop: '10px', 
-                    marginLeft: '10px',
-                    padding: '8px 16px', 
-                    backgroundColor: '#f59e0b', // Orange warning color for Edit
-                    color: 'white', 
-                    textDecoration: 'none', 
-                    borderRadius: '5px',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  Edit
-                </Link>
+                <>
+                  <Link to={`/instructors/${instructor.id}/edit`} style={{ display: 'inline-block', marginTop: '10px', marginLeft: '10px', padding: '8px 16px', backgroundColor: '#f59e0b', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
+                    Edit
+                  </Link>
+
+                  <button 
+                    onClick={() => handleDelete(instructor.id)}
+                    style={{ display: 'inline-block', marginTop: '10px', marginLeft: '10px', padding: '8px 16px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
+                    Delete
+                  </button>
+                </>
               )}
             </div>
           ))}
@@ -119,15 +117,7 @@ function InstructorListPage() {
           <button 
             onClick={() => setCurrentPage(currentPage - 1)} 
             disabled={currentPage === 0}
-            style={{ 
-              padding: "10px 20px", 
-              backgroundColor: currentPage === 0 ? "#ccc" : "#3b82f6", 
-              color: "white", 
-              border: "none", 
-              borderRadius: "5px", 
-              cursor: currentPage === 0 ? "not-allowed" : "pointer",
-              fontWeight: "bold"
-            }}
+            style={{ padding: "10px 20px", backgroundColor: currentPage === 0 ? "#ccc" : "#3b82f6", color: "white", border: "none", borderRadius: "5px", cursor: currentPage === 0 ? "not-allowed" : "pointer", fontWeight: "bold" }}
           >
             ← Previous
           </button>
@@ -139,15 +129,7 @@ function InstructorListPage() {
           <button 
             onClick={() => setCurrentPage(currentPage + 1)} 
             disabled={currentPage >= totalPages - 1}
-            style={{ 
-              padding: "10px 20px", 
-              backgroundColor: currentPage >= totalPages - 1 ? "#ccc" : "#3b82f6", 
-              color: "white", 
-              border: "none", 
-              borderRadius: "5px", 
-              cursor: currentPage >= totalPages - 1 ? "not-allowed" : "pointer",
-              fontWeight: "bold"
-            }}
+            style={{ padding: "10px 20px", backgroundColor: currentPage >= totalPages - 1 ? "#ccc" : "#3b82f6", color: "white", border: "none", borderRadius: "5px", cursor: currentPage >= totalPages - 1 ? "not-allowed" : "pointer", fontWeight: "bold" }}
           >
             Next →
           </button>
