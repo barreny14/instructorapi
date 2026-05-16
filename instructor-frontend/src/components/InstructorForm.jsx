@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 function InstructorForm({ initialData, onSubmit, buttonText }) {
   const navigate = useNavigate();
 
-  // 1. Initialize State. 
-  // The '?.` (optional chaining) safely checks if initialData exists before grabbing its properties.
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
     email: initialData?.email || "",
@@ -14,42 +12,34 @@ function InstructorForm({ initialData, onSubmit, buttonText }) {
     active: initialData?.active || false,
   });
 
-  // 2. State to hold our validation errors
   const [errors, setErrors] = useState({});
 
-  // 3. The Universal Change Handler
   function handleChange(event) {
     const { name, value, type, checked } = event.target;
     
     setFormData({
       ...formData,
-      // If it's the 'active' checkbox, use 'checked' instead of 'value'
       [name]: type === "checkbox" ? checked : value,
     });
   }
 
-  // 4. Client-Side Validation Logic
   function validateForm() {
     const newErrors = {};
 
-    // Name Validation
     if (!formData.name.trim()) {
       newErrors.name = "Name is required.";
     }
 
-    // Email Validation
     if (!formData.email.trim()) {
       newErrors.email = "Email is required.";
     } else if (!formData.email.includes("@")) {
       newErrors.email = "Email must contain an @ symbol.";
     }
 
-    // Specialization Validation
     if (!formData.specialization.trim()) {
       newErrors.specialization = "Specialization is required.";
     }
 
-    // Years of Experience Validation
     if (formData.yearsOfExperience === "" || formData.yearsOfExperience === null) {
       newErrors.yearsOfExperience = "Years of experience is required.";
     } else if (Number(formData.yearsOfExperience) < 0) {
@@ -58,29 +48,24 @@ function InstructorForm({ initialData, onSubmit, buttonText }) {
 
     setErrors(newErrors);
 
-    // If the errors object is empty, the form is valid (returns true)
     return Object.keys(newErrors).length === 0;
   }
 
-  // 5. Submit Handler
   function handleSubmit(event) {
     event.preventDefault();
 
-    // Stop the submission if validation fails
     if (!validateForm()) {
       return;
     }
 
-    // Prepare the final clean object to send up to the parent page
     const instructorToSubmit = {
       name: formData.name.trim(),
       email: formData.email.trim(),
       specialization: formData.specialization.trim(),
-      yearsOfExperience: Number(formData.yearsOfExperience),
+      yearsExperience: Number(formData.yearsOfExperience),
       active: formData.active,
     };
 
-    // Trigger the function passed in by the parent page
     onSubmit(instructorToSubmit);
   }
 

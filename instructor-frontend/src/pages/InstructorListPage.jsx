@@ -7,19 +7,19 @@ function InstructorListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // --- NEW: Pagination State ---
-  const [currentPage, setCurrentPage] = useState(0); // Spring Boot starts counting at 0
+  const [currentPage, setCurrentPage] = useState(0); 
   const [totalPages, setTotalPages] = useState(1);
+
+  const role = localStorage.getItem("role");
+  const isAdmin = role === "ADMIN";
 
   useEffect(() => {
     async function loadInstructors() {
       try {
-        setLoading(true); // Show loading text while fetching the new page
+        setLoading(true); 
         
-        // Ask the API for the specific page
         const data = await getAllInstructors(currentPage);
         
-        // Open the box! Save the list AND the total number of pages
         setInstructors(data.content);
         setTotalPages(data.totalPages);
 
@@ -32,9 +32,7 @@ function InstructorListPage() {
     }
 
     loadInstructors();
-  }, [currentPage]); // <-- IMPORTANT: Tell React to re-run this whenever currentPage changes!
-
-  // --- RENDERING LOGIC ---
+  }, [currentPage]); 
 
   if (loading) {
     return <h2>Loading instructors...</h2>;
@@ -55,8 +53,28 @@ function InstructorListPage() {
 
   return (
     <div>
-      <h1>Instructors</h1>
-      <p>These instructors are loaded directly from your Spring Boot database!</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1>Instructors</h1>
+          <p>These instructors are loaded directly from your Spring Boot database!</p>
+        </div>
+        
+        {isAdmin && (
+          <Link to="/instructors/create">
+            <button style={{ 
+              padding: '10px 20px', 
+              backgroundColor: '#10b981', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '5px', 
+              fontWeight: 'bold', 
+              cursor: 'pointer' 
+            }}>
+              + Create Instructor
+            </button>
+          </Link>
+        )}
+      </div>
 
       {instructors.length === 0 ? (
         <p>No instructors found on this page.</p>
@@ -71,12 +89,30 @@ function InstructorListPage() {
               <Link to={`/instructors/${instructor.id}`} style={{ display: 'inline-block', marginTop: '10px', padding: '8px 16px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
                 View Details
               </Link>
+
+              {isAdmin && (
+                <Link 
+                  to={`/instructors/${instructor.id}/edit`}
+                  style={{ 
+                    display: 'inline-block', 
+                    marginTop: '10px', 
+                    marginLeft: '10px',
+                    padding: '8px 16px', 
+                    backgroundColor: '#f59e0b', // Orange warning color for Edit
+                    color: 'white', 
+                    textDecoration: 'none', 
+                    borderRadius: '5px',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  Edit
+                </Link>
+              )}
             </div>
           ))}
         </div>
       )}
 
-      {/* --- NEW: Pagination Buttons --- */}
       {totalPages > 1 && (
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "30px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
           

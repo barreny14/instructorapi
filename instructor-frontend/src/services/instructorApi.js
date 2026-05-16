@@ -8,8 +8,8 @@ function getAuthHeaders() {
   };
 }
 
-export async function getAllInstructors() {
-  const response = await fetch(INSTRUCTOR_API_URL, {
+export async function getAllInstructors(page = 0) {
+  const response = await fetch(`${INSTRUCTOR_API_URL}?page=${page}`, {
     method: "GET",
     headers: getAuthHeaders(),
   });
