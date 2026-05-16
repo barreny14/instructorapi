@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './routes/ProtectedRoute';
+import InstructorCreatePage from './pages/InstructorCreatePage';
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
           path="/instructors/create" 
           element={
             <ProtectedRoute adminOnly={true}>
-              <div><h1>Create Instructor Page (Admins Only)</h1></div>
+              <InstructorCreatePage />
             </ProtectedRoute>
           } 
         />
@@ -43,7 +44,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        
+
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
