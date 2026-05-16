@@ -25,6 +25,24 @@ function App() {
             </ProtectedRoute>
           } 
         />
+
+        <Route 
+          path="/instructors/create" 
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <div><h1>Create Instructor Page (Admins Only)</h1></div>
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/instructors/:id/edit" 
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <div><h1>Edit Instructor Page (Admins Only)</h1></div>
+            </ProtectedRoute>
+          } 
+        />
         
         <Route path="*" element={<NotFoundPage />} />
       </Route>
