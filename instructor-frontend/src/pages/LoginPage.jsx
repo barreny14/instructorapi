@@ -1,21 +1,39 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/authApi"; 
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); 
-  const handleLogin = (e) => {
+  const [error, setError] = useState(""); 
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
     e.preventDefault(); 
-    
-    localStorage.setItem("token", "fake-token");
-    
-    navigate("/dashboard");
+    setError("");
+  
+    try {
+      const data = await loginUser(email, password);
+      
+      localStorage.setItem("token", data.token || "real-token-fallback");
+      
+      navigate("/dashboard");
+      
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
     <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
       <h1>Login</h1>
+      
+      {error && (
+        <div style={{ backgroundColor: "#f8d7da", color: "#721c24", padding: "10px", marginBottom: "15px", borderRadius: "5px" }}>
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
         <div>
           <label>Email:</label><br />

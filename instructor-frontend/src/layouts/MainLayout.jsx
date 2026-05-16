@@ -5,7 +5,6 @@ function MainLayout() {
   return (
     <div>
       <Navbar />
-
       <main className="container">
         <Outlet />
       </main>
