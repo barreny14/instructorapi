@@ -15,7 +15,9 @@ function LoginPage() {
     try {
       const data = await loginUser(email, password);
       
-      localStorage.setItem("token", data.token || "real-token-fallback");
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("email", data.email);
+      localStorage.setItem("role", data.role);
       
       navigate("/dashboard");
       
