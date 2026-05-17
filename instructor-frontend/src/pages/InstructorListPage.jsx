@@ -37,7 +37,6 @@ function InstructorListPage() {
     try {
       await deleteInstructor(id);
       setInstructors(instructors.filter((instructor) => instructor.id !== id));
-      
     } catch (err) {
       console.error(err);
       alert("Failed to delete the instructor. Please try again.");
@@ -49,12 +48,12 @@ function InstructorListPage() {
   }
 
   if (error) {
-    return <h2 style={{ color: "#dc2626" }}>{error}</h2>;
+    return <h2 className="error-message">{error}</h2>;
   }
 
   if (!Array.isArray(instructors)) {
     return (
-      <div style={{ padding: "20px", background: "#f8d7da", color: "#721c24", borderRadius: "8px", marginTop: "20px" }}>
+      <div className="error-box">
         <h2>Oops! Data Mismatch</h2>
         <p>Check your F12 Console. Spring Boot sent something unexpected!</p>
       </div>
@@ -62,8 +61,8 @@ function InstructorListPage() {
   }
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <section>
+      <div className="page-header">
         <div>
           <h1>Instructors</h1>
           <p>These instructors are loaded directly from your Spring Boot database!</p>
@@ -71,9 +70,7 @@ function InstructorListPage() {
 
         {isAdmin && (
           <Link to="/instructors/create">
-            <button style={{ padding: "10px 15px", backgroundColor: "#10b981", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}>
-              Create Instructor
-            </button>
+            <button className="create-btn">Create Instructor</button>
           </Link>
         )}
       </div>
@@ -81,62 +78,54 @@ function InstructorListPage() {
       {instructors.length === 0 ? (
         <p>No instructors found on this page.</p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
+        <div className="card-grid">
           {instructors.map((instructor) => (
-            <div key={instructor.id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px', backgroundColor: 'white', color: 'black' }}>
-              <h2 style={{ marginTop: 0, color: '#0f172a' }}>{instructor.name}</h2>
+            <div key={instructor.id} className="card">
+              <h2>{instructor.name}</h2>
               <p><strong>Specialization:</strong> {instructor.specialization}</p>
               <p><strong>Experience:</strong> {instructor.yearsOfExperience} years</p>
               
-              <Link to={`/instructors/${instructor.id}`} style={{ display: 'inline-block', marginTop: '10px', padding: '8px 16px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
-                View Details
-              </Link>
+              <div className="card-actions">
+                <Link to={`/instructors/${instructor.id}`}>View Details</Link>
 
-              {isAdmin && (
-                <>
-                  <Link to={`/instructors/${instructor.id}/edit`} style={{ display: 'inline-block', marginTop: '10px', marginLeft: '10px', padding: '8px 16px', backgroundColor: '#f59e0b', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
-                    Edit
-                  </Link>
-
-                  <button 
-                    onClick={() => handleDelete(instructor.id)}
-                    style={{ display: 'inline-block', marginTop: '10px', marginLeft: '10px', padding: '8px 16px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
+                {isAdmin && (
+                  <>
+                    <Link to={`/instructors/${instructor.id}/edit`} className="edit-btn">
+                      Edit
+                    </Link>
+                    <button onClick={() => handleDelete(instructor.id)} className="delete-btn">
+                      Delete
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </div>
       )}
 
       {totalPages > 1 && (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "30px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
-          
+        <div className="pagination">
           <button 
             onClick={() => setCurrentPage(currentPage - 1)} 
             disabled={currentPage === 0}
-            style={{ padding: "10px 20px", backgroundColor: currentPage === 0 ? "#ccc" : "#3b82f6", color: "white", border: "none", borderRadius: "5px", cursor: currentPage === 0 ? "not-allowed" : "pointer", fontWeight: "bold" }}
           >
-            ← Previous
+            &larr; Previous
           </button>
 
-          <span style={{ fontWeight: "bold" }}>
+          <span className="page-info">
             Page {currentPage + 1} of {totalPages}
           </span>
 
           <button 
             onClick={() => setCurrentPage(currentPage + 1)} 
             disabled={currentPage >= totalPages - 1}
-            style={{ padding: "10px 20px", backgroundColor: currentPage >= totalPages - 1 ? "#ccc" : "#3b82f6", color: "white", border: "none", borderRadius: "5px", cursor: currentPage >= totalPages - 1 ? "not-allowed" : "pointer", fontWeight: "bold" }}
           >
-            Next →
+            Next &rarr;
           </button>
-          
         </div>
       )}
-    </div>
+    </section>
   );
 }
 

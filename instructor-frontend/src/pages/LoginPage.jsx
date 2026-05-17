@@ -1,67 +1,80 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/authApi"; 
+import { loginUser } from "../services/authApi";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); 
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault(); 
+  // Pre-filled for easy testing during development
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Added loading state
+
+  async function handleLogin(event) {
+    event.preventDefault();
+
     setError("");
-  
+    setLoading(true);
+
     try {
       const data = await loginUser(email, password);
-      
+
+      console.log("Login response:", data);
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("email", data.email);
       localStorage.setItem("role", data.role);
-      
+
       navigate("/dashboard");
-      
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      console.error(error);
+      // More generic, user-friendly error message
+      setError("Login failed. Please check your email and password.");
+    } finally {
+      // Ensure loading is set back to false whether it succeeds or fails
+      setLoading(false); 
     }
-  };
+  }
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
+    <section className="login-page">
       <h1>Login</h1>
-      
-      {error && (
-        <div style={{ backgroundColor: "#f8d7da", color: "#721c24", padding: "10px", marginBottom: "15px", borderRadius: "5px" }}>
-          {error}
-        </div>
-      )}
 
-      <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-        <div>
-          <label>Email:</label><br />
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-            style={{ width: "100%", padding: "8px" }}
+      <p>
+        Login to access the protected dashboard. For this demo, protected means
+        the user has a valid token.
+      </p>
+
+      {error && <p className="error-message">{error}</p>}
+
+      <form className="form" onSubmit={handleLogin}>
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="Enter email"
           />
         </div>
-        <div>
-          <label>Password:</label><br />
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-            style={{ width: "100%", padding: "8px" }}
+
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Enter password"
           />
         </div>
-        <button type="submit" style={{ padding: "10px", backgroundColor: "#28a745", color: "white", border: "none", cursor: "pointer" }}>
-          Login
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
-    </div>
+    </section>
   );
 }
 

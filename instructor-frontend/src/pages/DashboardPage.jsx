@@ -1,26 +1,72 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getAllInstructors } from "../services/instructorApi";
 
 function DashboardPage() {
-  const navigate = useNavigate();
+  const [instructors, setInstructors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    
-    navigate("/login");
-  };
+  useEffect(() => {
+    async function loadDashboardData() {
+      try {
+        // Fetch instructors (passing 0 to get the first page if your API requires it)
+        const data = await getAllInstructors(0); 
+        
+        // Handle Spring Boot's paginated response (data.content) or a standard array (data)
+        const instructorList = data.content || data;
+        setInstructors(instructorList);
+      } catch (error) {
+        console.error(error);
+        setError("Could not load dashboard data.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadDashboardData();
+  }, []);
+
+  if (loading) {
+    return <p>Loading dashboard...</p>;
+  }
+
+  if (error) {
+    return <p className="error-message">{error}</p>;
+  }
+
+  // Calculate metrics based on the 'active' boolean in your Instructor data
+  const totalInstructors = instructors.length;
+  const activeInstructors = instructors.filter((instructor) => instructor.active).length;
+  const inactiveInstructors = instructors.filter((instructor) => !instructor.active).length;
 
   return (
-    <div>
-      <h1>Protected Dashboard</h1>
-      <p>Welcome! You are logged in and can see this secret page.</p>
-      
-      <button 
-        onClick={handleLogout} 
-        style={{ padding: "10px", backgroundColor: "#dc3545", color: "white", border: "none", cursor: "pointer" }}
-      >
-        Logout
-      </button>
-    </div>
+    <section>
+      <div className="page-header">
+        <div>
+          <h1>Dashboard</h1>
+          <p>
+            This is a protected page. You can only see this page after logging in.
+          </p>
+        </div>
+      </div>
+
+      <div className="card-grid">
+        <div className="card">
+          <h2>Total Instructors</h2>
+          <p className="metric">{totalInstructors}</p>
+        </div>
+
+        <div className="card">
+          <h2>Active Instructors</h2>
+          <p className="metric">{activeInstructors}</p>
+        </div>
+
+        <div className="card">
+          <h2>Inactive Instructors</h2>
+          <p className="metric">{inactiveInstructors}</p>
+        </div>
+      </div>
+    </section>
   );
 }
 
