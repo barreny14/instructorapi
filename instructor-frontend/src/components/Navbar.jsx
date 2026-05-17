@@ -14,7 +14,6 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      {/* Changed class name to match the teacher's exact CSS */}
       <div className="nav-brand">Instructor Management System</div>
 
       <div className="nav-links">

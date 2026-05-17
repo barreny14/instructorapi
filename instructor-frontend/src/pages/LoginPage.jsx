@@ -5,12 +5,11 @@ import { loginUser } from "../services/authApi";
 function LoginPage() {
   const navigate = useNavigate();
 
-  // Pre-filled for easy testing during development
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Added loading state
+  const [loading, setLoading] = useState(false); 
 
   async function handleLogin(event) {
     event.preventDefault();
@@ -30,10 +29,8 @@ function LoginPage() {
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
-      // More generic, user-friendly error message
       setError("Login failed. Please check your email and password.");
     } finally {
-      // Ensure loading is set back to false whether it succeeds or fails
       setLoading(false); 
     }
   }

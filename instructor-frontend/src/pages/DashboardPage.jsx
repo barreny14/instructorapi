@@ -9,10 +9,8 @@ function DashboardPage() {
   useEffect(() => {
     async function loadDashboardData() {
       try {
-        // Fetch instructors (passing 0 to get the first page if your API requires it)
         const data = await getAllInstructors(0); 
         
-        // Handle Spring Boot's paginated response (data.content) or a standard array (data)
         const instructorList = data.content || data;
         setInstructors(instructorList);
       } catch (error) {
@@ -34,7 +32,6 @@ function DashboardPage() {
     return <p className="error-message">{error}</p>;
   }
 
-  // Calculate metrics based on the 'active' boolean in your Instructor data
   const totalInstructors = instructors.length;
   const activeInstructors = instructors.filter((instructor) => instructor.active).length;
   const inactiveInstructors = instructors.filter((instructor) => !instructor.active).length;

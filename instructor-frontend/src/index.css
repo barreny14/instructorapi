@@ -30,7 +30,7 @@ body {
 }
 
 .navbar-links a {
-  color: rgb(241, 8, 8);
+  color: white;
   text-decoration: none;
 }
 
@@ -51,7 +51,6 @@ body {
   margin-bottom: 24px;
 }
 
-/* Form Styles matching the teacher's code */
 .form {
   background: white;
   padding: 24px;
@@ -87,7 +86,7 @@ body {
 
 .form button, 
 .form-actions button {
-  background: #16a34a; /* Success Green */
+  background: #16a34a; 
   color: white;
   padding: 10px 14px;
   border: none;
@@ -96,7 +95,7 @@ body {
 }
 
 .form-actions button[type="button"] {
-  background: #6b7280; /* Gray for cancel */
+  background: #6b7280; 
 }
 
 .error-message {

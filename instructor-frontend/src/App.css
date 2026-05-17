@@ -194,3 +194,13 @@
 .nav-links button:hover {
   background: #b91c1c; 
 }
+
+.status-active {
+  color: #16a34a; 
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: #dc2626;
+  font-weight: bold;
+}
