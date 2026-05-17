@@ -8,8 +8,8 @@ function getAuthHeaders() {
   };
 }
 
-export async function getAllInstructors(page = 0) {
-  const response = await fetch(`${INSTRUCTOR_API_URL}?page=${page}`, {
+export async function getAllInstructors(page = 0, size = 5) {
+  const response = await fetch(`${INSTRUCTOR_API_URL}?page=${page}&size=${size}`, {
     method: "GET",
     headers: getAuthHeaders(),
   });
@@ -61,8 +61,8 @@ export async function deleteInstructor(id) {
   return true; 
 }
 
-export async function searchInstructors(keyword) {
-  const response = await fetch(`${INSTRUCTOR_API_URL}?keyword=${encodeURIComponent(keyword)}`, {
+export async function searchInstructors(keyword, page = 0, size = 5) {
+  const response = await fetch(`${INSTRUCTOR_API_URL}?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${size}`, {
     method: "GET",
     headers: getAuthHeaders(),
   });

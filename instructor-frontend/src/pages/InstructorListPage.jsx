@@ -3,15 +3,19 @@ import { Link } from "react-router-dom";
 import { getAllInstructors, deleteInstructor, searchInstructors } from "../services/instructorApi";
 import SearchBox from "../components/SearchBox";
 import InstructorCard from "../components/InstructorCard";
+import Pagination from "../components/Pagination";
 
 function InstructorListPage() {
   const [instructors, setInstructors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const [currentPage, setCurrentPage] = useState(0); 
+  // 1. WE START AT PAGE 1 NOW!
+  // Because your teacher's pagination starts at 1, we set the initial state to 1.
+  const [currentPage, setCurrentPage] = useState(1); 
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [pageSize, setPageSize] = useState(5);
 
   const role = localStorage.getItem("role");
   const isAdmin = role === "ADMIN";
@@ -22,16 +26,19 @@ function InstructorListPage() {
         setLoading(true); 
         let data;
 
+        // 2. THE SPRING BOOT MATH TRICK!
+        // Spring Boot starts counting pages at 0. Since our React app starts at 1, 
+        // we have to subtract 1 right before we send the request to the database.
+        const apiPage = currentPage - 1; 
+
         if (searchTerm.trim() === "") {
-          data = await getAllInstructors(currentPage);
-        } 
-        else {
-          data = await searchInstructors(searchTerm);
+          data = await getAllInstructors(apiPage, pageSize);
+        } else {
+          data = await searchInstructors(searchTerm, apiPage, pageSize);
         }
 
         const instructorList = data.content || data;
         setInstructors(instructorList);
-        
         setTotalPages(data.totalPages || 1);
 
       } catch (err) {
@@ -43,7 +50,7 @@ function InstructorListPage() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [currentPage, searchTerm]); 
+  }, [currentPage, searchTerm, pageSize]); 
 
   async function handleDelete(id) {
     const isConfirmed = window.confirm("Are you sure you want to delete this instructor?");
@@ -57,6 +64,20 @@ function InstructorListPage() {
       alert("Failed to delete the instructor. Please try again.");
     }
   }
+
+  // 3. RESET TO PAGE 1
+  // If the user searches a new word, we send them back to Page 1 so they don't get lost.
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1); 
+  };
+
+  // 4. RESET TO PAGE 1
+  // If they change how many items to show, we also send them back to Page 1.
+  const handlePageSizeChange = (newSize) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
 
   if (loading) return <h2>Loading instructors...</h2>;
   if (error) return <h2 className="error-message">{error}</h2>;
@@ -78,7 +99,7 @@ function InstructorListPage() {
 
       <SearchBox 
         searchTerm={searchTerm} 
-        onSearchChange={setSearchTerm} 
+        onSearchChange={handleSearchChange} 
         resultCount={instructors.length}
         totalCount={instructors.length}
       />
@@ -98,27 +119,14 @@ function InstructorListPage() {
         </div>
       )}
 
-      {totalPages > 1 && (
-        <div className="pagination">
-          <button 
-            onClick={() => setCurrentPage(currentPage - 1)} 
-            disabled={currentPage === 0}
-          >
-            &larr; Previous
-          </button>
-
-          <span className="page-info">
-            Page {currentPage + 1} of {totalPages}
-          </span>
-
-          <button 
-            onClick={() => setCurrentPage(currentPage + 1)} 
-            disabled={currentPage >= totalPages - 1}
-          >
-            Next &rarr;
-          </button>
-        </div>
-      )}
+      {/* 5. PASSING THE PROPS TO YOUR TEACHER'S PAGINATION */}
+      <Pagination 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={handlePageSizeChange}
+      />
     </section>
   );
 }
