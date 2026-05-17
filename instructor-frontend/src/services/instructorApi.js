@@ -60,3 +60,16 @@ export async function deleteInstructor(id) {
   
   return true; 
 }
+
+export async function searchInstructors(keyword) {
+  const response = await fetch(`${INSTRUCTOR_API_URL}?keyword=${encodeURIComponent(keyword)}`, {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to search instructors");
+  }
+  
+  return response.json();
+}

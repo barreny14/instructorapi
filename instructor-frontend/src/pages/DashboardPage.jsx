@@ -33,8 +33,8 @@ function DashboardPage() {
   }
 
   const totalInstructors = instructors.length;
-  const activeInstructors = instructors.filter((instructor) => instructor.active).length;
-  const inactiveInstructors = instructors.filter((instructor) => !instructor.active).length;
+  const activeInstructors = instructors.filter((instructor) => instructor.status === "ACTIVE").length;
+  const inactiveInstructors = instructors.filter((instructor) => !instructor.status === "ACTIVE").length;
 
   return (
     <section>

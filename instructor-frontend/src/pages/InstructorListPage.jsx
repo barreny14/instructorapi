@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllInstructors, deleteInstructor } from "../services/instructorApi";
+import { getAllInstructors, deleteInstructor, searchInstructors } from "../services/instructorApi";
+import SearchBox from "../components/SearchBox";
+import InstructorCard from "../components/InstructorCard";
 
 function InstructorListPage() {
   const [instructors, setInstructors] = useState([]);
@@ -9,26 +11,39 @@ function InstructorListPage() {
 
   const [currentPage, setCurrentPage] = useState(0); 
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const role = localStorage.getItem("role");
   const isAdmin = role === "ADMIN";
 
   useEffect(() => {
-    async function loadInstructors() {
+    const delayDebounceFn = setTimeout(async () => {
       try {
         setLoading(true); 
-        const data = await getAllInstructors(currentPage);
-        setInstructors(data.content);
-        setTotalPages(data.totalPages);
+        let data;
+
+        if (searchTerm.trim() === "") {
+          data = await getAllInstructors(currentPage);
+        } 
+        else {
+          data = await searchInstructors(searchTerm);
+        }
+
+        const instructorList = data.content || data;
+        setInstructors(instructorList);
+        
+        setTotalPages(data.totalPages || 1);
+
       } catch (err) {
         console.error(err);
         setError("Could not load instructors. Is Spring Boot running?");
       } finally {
         setLoading(false);
       }
-    }
-    loadInstructors();
-  }, [currentPage]); 
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [currentPage, searchTerm]); 
 
   async function handleDelete(id) {
     const isConfirmed = window.confirm("Are you sure you want to delete this instructor?");
@@ -43,22 +58,8 @@ function InstructorListPage() {
     }
   }
 
-  if (loading) {
-    return <h2>Loading instructors...</h2>;
-  }
-
-  if (error) {
-    return <h2 className="error-message">{error}</h2>;
-  }
-
-  if (!Array.isArray(instructors)) {
-    return (
-      <div className="error-box">
-        <h2>Oops! Data Mismatch</h2>
-        <p>Check your F12 Console. Spring Boot sent something unexpected!</p>
-      </div>
-    );
-  }
+  if (loading) return <h2>Loading instructors...</h2>;
+  if (error) return <h2 className="error-message">{error}</h2>;
 
   return (
     <section>
@@ -75,31 +76,24 @@ function InstructorListPage() {
         )}
       </div>
 
+      <SearchBox 
+        searchTerm={searchTerm} 
+        onSearchChange={setSearchTerm} 
+        resultCount={instructors.length}
+        totalCount={instructors.length}
+      />
+
       {instructors.length === 0 ? (
-        <p>No instructors found on this page.</p>
+        <p>No instructors match your search.</p>
       ) : (
         <div className="card-grid">
           {instructors.map((instructor) => (
-            <div key={instructor.id} className="card">
-              <h2>{instructor.name}</h2>
-              <p><strong>Specialization:</strong> {instructor.specialization}</p>
-              <p><strong>Experience:</strong> {instructor.yearsOfExperience} years</p>
-              
-              <div className="card-actions">
-                <Link to={`/instructors/${instructor.id}`}>View Details</Link>
-
-                {isAdmin && (
-                  <>
-                    <Link to={`/instructors/${instructor.id}/edit`} className="edit-btn">
-                      Edit
-                    </Link>
-                    <button onClick={() => handleDelete(instructor.id)} className="delete-btn">
-                      Delete
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
+            <InstructorCard
+              key={instructor.id}
+              instructor={instructor}
+              isAdmin={isAdmin}
+              onDelete={handleDelete} 
+            />
           ))}
         </div>
       )}

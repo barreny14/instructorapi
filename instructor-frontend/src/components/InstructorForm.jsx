@@ -9,7 +9,7 @@ function InstructorForm({ initialData, onSubmit, buttonText }) {
         email: initialData?.email || "",
         specialization: initialData?.specialization || "",
         yearsOfExperience: initialData?.yearsExperience || "", 
-        active: initialData?.active || false,
+        active: initialData?.active === "ACTIVE",
     });
 
     const [errors, setErrors] = useState({});
@@ -135,7 +135,6 @@ function InstructorForm({ initialData, onSubmit, buttonText }) {
             <div className="form-actions">
                 <button type="submit">{buttonText}</button>
 
-                {/* 🚨 EXERCISE 8: Cancel Button returning to /instructors 🚨 */}
                 <button type="button" onClick={() => navigate("/instructors")}>
                     Cancel
                 </button>

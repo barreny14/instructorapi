@@ -10,8 +10,8 @@ function InstructorCard({ instructor, isAdmin, onDelete }) {
       <p><strong>Experience:</strong> {instructor.yearsOfExperience} years</p>
       <p>
         <strong>Status:</strong>{" "}
-        <span className={instructor.active ? "status-active" : "status-inactive"}>
-          {instructor.active ? "Active" : "Inactive"}
+        <span className={instructor.status === "ACTIVE" ? "status-active" : "status-inactive"}>
+          {instructor.status === "ACTIVE" ? "Active" : "Inactive"}
         </span>
       </p>
       
