@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/HomePage';
-import InstructorListPage from './pages/InstructorListPage';
+import InstructorPage from './pages/InstructorPage';
 import InstructorDetailPage from './pages/InstructorDetailPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -16,7 +16,7 @@ function App() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/instructors" element={<InstructorListPage />} />
+        <Route path="/instructors" element={<InstructorPage />} />
         <Route path="/instructors/:id" element={<InstructorDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         

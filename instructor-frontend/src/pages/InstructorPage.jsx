@@ -5,17 +5,16 @@ import SearchBox from "../components/SearchBox";
 import InstructorCard from "../components/InstructorCard";
 import Pagination from "../components/Pagination";
 
-function InstructorListPage() {
+function InstructorsPage() {
   const [instructors, setInstructors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // 1. WE START AT PAGE 1 NOW!
-  // Because your teacher's pagination starts at 1, we set the initial state to 1.
-  const [currentPage, setCurrentPage] = useState(1); 
-  const [totalPages, setTotalPages] = useState(1);
+  const [successMessage, setSuccessMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  
+  const [totalPages, setTotalPages] = useState(1); 
 
   const role = localStorage.getItem("role");
   const isAdmin = role === "ADMIN";
@@ -24,11 +23,9 @@ function InstructorListPage() {
     const delayDebounceFn = setTimeout(async () => {
       try {
         setLoading(true); 
+        setError(""); 
         let data;
 
-        // 2. THE SPRING BOOT MATH TRICK!
-        // Spring Boot starts counting pages at 0. Since our React app starts at 1, 
-        // we have to subtract 1 right before we send the request to the database.
         const apiPage = currentPage - 1; 
 
         if (searchTerm.trim() === "") {
@@ -43,7 +40,7 @@ function InstructorListPage() {
 
       } catch (err) {
         console.error(err);
-        setError("Could not load instructors. Is Spring Boot running?");
+        setError("Could not load instructors."); 
       } finally {
         setLoading(false);
       }
@@ -59,21 +56,24 @@ function InstructorListPage() {
     try {
       await deleteInstructor(id);
       setInstructors(instructors.filter((instructor) => instructor.id !== id));
+      
+      setSuccessMessage("Instructor deleted successfully.");
+      
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
+
     } catch (err) {
       console.error(err);
       alert("Failed to delete the instructor. Please try again.");
     }
   }
 
-  // 3. RESET TO PAGE 1
-  // If the user searches a new word, we send them back to Page 1 so they don't get lost.
   const handleSearchChange = (term) => {
     setSearchTerm(term);
     setCurrentPage(1); 
   };
 
-  // 4. RESET TO PAGE 1
-  // If they change how many items to show, we also send them back to Page 1.
   const handlePageSizeChange = (newSize) => {
     setPageSize(newSize);
     setCurrentPage(1);
@@ -97,6 +97,12 @@ function InstructorListPage() {
         )}
       </div>
 
+      {successMessage && (
+        <div className="success-banner">
+          {successMessage}
+        </div>
+      )}
+
       <SearchBox 
         searchTerm={searchTerm} 
         onSearchChange={handleSearchChange} 
@@ -105,7 +111,11 @@ function InstructorListPage() {
       />
 
       {instructors.length === 0 ? (
-        <p>No instructors match your search.</p>
+        searchTerm ? (
+          <p>No instructors match your search.</p>
+        ) : (
+          <p>No instructors found.</p>
+        )
       ) : (
         <div className="card-grid">
           {instructors.map((instructor) => (
@@ -119,7 +129,6 @@ function InstructorListPage() {
         </div>
       )}
 
-      {/* 5. PASSING THE PROPS TO YOUR TEACHER'S PAGINATION */}
       <Pagination 
         currentPage={currentPage}
         totalPages={totalPages}
@@ -131,4 +140,4 @@ function InstructorListPage() {
   );
 }
 
-export default InstructorListPage;
+export default InstructorsPage;
