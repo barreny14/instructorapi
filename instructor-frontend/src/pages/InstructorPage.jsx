@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllInstructors, deleteInstructor, searchInstructors } from "../services/instructorApi";
+import { getAllInstructors, deleteInstructor } from "../services/instructorApi";
 import SearchBox from "../components/SearchBox";
 import InstructorCard from "../components/InstructorCard";
 import Pagination from "../components/Pagination";
@@ -14,40 +14,29 @@ function InstructorsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [totalPages, setTotalPages] = useState(1); 
 
   const role = localStorage.getItem("role");
   const isAdmin = role === "ADMIN";
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
+    async function loadData() {
       try {
         setLoading(true); 
         setError(""); 
-        let data;
-
-        const apiPage = currentPage - 1; 
-
-        if (searchTerm.trim() === "") {
-          data = await getAllInstructors(apiPage, pageSize);
-        } else {
-          data = await searchInstructors(searchTerm, apiPage, pageSize);
-        }
-
+        
+        const data = await getAllInstructors(0, 1000); 
+        
         const instructorList = data.content || data;
         setInstructors(instructorList);
-        setTotalPages(data.totalPages || 1);
-
       } catch (err) {
         console.error(err);
         setError("Could not load instructors."); 
       } finally {
         setLoading(false);
       }
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [currentPage, searchTerm, pageSize]); 
+    }
+    loadData();
+  }, []); 
 
   async function handleDelete(id) {
     const isConfirmed = window.confirm("Are you sure you want to delete this instructor?");
@@ -78,22 +67,28 @@ function InstructorsPage() {
     setCurrentPage(1);
   };
 
-
   const filteredInstructors = instructors.filter((instructor) => {
     if (!searchTerm) return true;
-
     const term = searchTerm.toLowerCase();
 
     const matchesName = instructor.name.toLowerCase().includes(term);
     const matchesEmail = instructor.email.toLowerCase().includes(term);
     const matchesSpec = instructor.specialization.toLowerCase().includes(term);
-
-    const matchesStatus = instructor.status 
-        ? instructor.status.toLowerCase().includes(term)
-        : false;
+    const matchesStatus = instructor.status ? instructor.status.toLowerCase().includes(term) : false;
 
     return matchesName || matchesEmail || matchesSpec || matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredInstructors.length / pageSize) || 1;
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedInstructors = filteredInstructors.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
 
 
   if (loading) return <h2>Loading instructors...</h2>;
@@ -127,7 +122,7 @@ function InstructorsPage() {
         totalCount={instructors.length}
       />
 
-      {filteredInstructors.length === 0 ? (
+      {paginatedInstructors.length === 0 ? (
         searchTerm ? (
           <p>No instructors match your search.</p>
         ) : (
@@ -135,7 +130,7 @@ function InstructorsPage() {
         )
       ) : (
         <div className="card-grid">
-          {filteredInstructors.map((instructor) => (
+          {paginatedInstructors.map((instructor) => (
             <InstructorCard
               key={instructor.id}
               instructor={instructor}
@@ -148,7 +143,7 @@ function InstructorsPage() {
 
       <Pagination 
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={totalPages} 
         pageSize={pageSize}
         onPageChange={setCurrentPage}
         onPageSizeChange={handlePageSizeChange}
