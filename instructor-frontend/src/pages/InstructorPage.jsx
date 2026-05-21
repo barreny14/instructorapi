@@ -38,14 +38,13 @@ function InstructorsPage() {
     loadData();
   }, []); 
 
-  async function handleDelete(id) {
-    const isConfirmed = window.confirm("Are you sure you want to delete this instructor?");
+  async function handleDeleteInstructor(instructor) {
+    const isConfirmed = window.confirm(`Are you sure you want to delete ${instructor.name}?`);
     if (!isConfirmed) return;
 
     try {
-      await deleteInstructor(id);
-      setInstructors(instructors.filter((instructor) => instructor.id !== id));
-      
+      await deleteInstructor(instructor.id);
+      setInstructors(instructors.filter((inst) => inst.id !== instructor.id));
       setSuccessMessage("Instructor deleted successfully.");
       setTimeout(() => {
         setSuccessMessage("");
@@ -53,7 +52,10 @@ function InstructorsPage() {
 
     } catch (err) {
       console.error(err);
-      alert("Failed to delete the instructor. Please try again.");
+      setError("Failed to delete the instructor. They might be assigned to a course.");
+      setTimeout(() => {
+        setError("");
+      }, 4000);
     }
   }
 
@@ -135,7 +137,7 @@ function InstructorsPage() {
               key={instructor.id}
               instructor={instructor}
               isAdmin={isAdmin}
-              onDelete={handleDelete} 
+              onDelete={() => handleDeleteInstructor(instructor)} 
             />
           ))}
         </div>
