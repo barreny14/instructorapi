@@ -10,10 +10,10 @@ function InstructorsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  
   const [totalPages, setTotalPages] = useState(1); 
 
   const role = localStorage.getItem("role");
@@ -58,7 +58,6 @@ function InstructorsPage() {
       setInstructors(instructors.filter((instructor) => instructor.id !== id));
       
       setSuccessMessage("Instructor deleted successfully.");
-      
       setTimeout(() => {
         setSuccessMessage("");
       }, 3000);
@@ -78,6 +77,24 @@ function InstructorsPage() {
     setPageSize(newSize);
     setCurrentPage(1);
   };
+
+
+  const filteredInstructors = instructors.filter((instructor) => {
+    if (!searchTerm) return true;
+
+    const term = searchTerm.toLowerCase();
+
+    const matchesName = instructor.name.toLowerCase().includes(term);
+    const matchesEmail = instructor.email.toLowerCase().includes(term);
+    const matchesSpec = instructor.specialization.toLowerCase().includes(term);
+
+    const matchesStatus = instructor.status 
+        ? instructor.status.toLowerCase().includes(term)
+        : false;
+
+    return matchesName || matchesEmail || matchesSpec || matchesStatus;
+  });
+
 
   if (loading) return <h2>Loading instructors...</h2>;
   if (error) return <h2 className="error-message">{error}</h2>;
@@ -106,11 +123,11 @@ function InstructorsPage() {
       <SearchBox 
         searchTerm={searchTerm} 
         onSearchChange={handleSearchChange} 
-        resultCount={instructors.length}
+        resultCount={filteredInstructors.length}
         totalCount={instructors.length}
       />
 
-      {instructors.length === 0 ? (
+      {filteredInstructors.length === 0 ? (
         searchTerm ? (
           <p>No instructors match your search.</p>
         ) : (
@@ -118,7 +135,7 @@ function InstructorsPage() {
         )
       ) : (
         <div className="card-grid">
-          {instructors.map((instructor) => (
+          {filteredInstructors.map((instructor) => (
             <InstructorCard
               key={instructor.id}
               instructor={instructor}
