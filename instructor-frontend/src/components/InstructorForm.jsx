@@ -1,147 +1,121 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function InstructorForm({ initialData, onSubmit, buttonText }) {
-    const navigate = useNavigate();
+function InstructorForm({ initialData, onSubmit }) {
+  const [formData, setFormData] = useState({
+    name: initialData?.name || "",
+    email: initialData?.email || "",
+    specialization: initialData?.specialization || "",
+    yearsOfExperience: initialData?.yearsOfExperience || "",
+    active: initialData?.status === "ACTIVE" || false,
+  });
 
-    const [formData, setFormData] = useState({
-        name: initialData?.name || "",
-        email: initialData?.email || "",
-        specialization: initialData?.specialization || "",
-        yearsOfExperience: initialData?.yearsExperience || "", 
-        active: initialData?.active === "ACTIVE",
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); 
+    const newErrors = {};
+
+    if (!formData.name) newErrors.name = "Name is required";
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.specialization) newErrors.specialization = "Specialization is required";
+    if (!formData.yearsOfExperience) newErrors.yearsOfExperience = "Years experience is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return; 
+    }
+
+    setErrors({});
+    onSubmit({
+      name: formData.name,
+      email: formData.email,
+      specialization: formData.specialization,
+      yearsOfExperience: Number(formData.yearsOfExperience), 
+      status: formData.active ? "ACTIVE" : "INACTIVE", 
     });
+  };
 
-    const [errors, setErrors] = useState({});
+  return (
+    <form className="form" onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label htmlFor="name">Name</label>
+        <input
+          id="name"
+          name="name"
+          placeholder="e.g. John Doe"
+          type="text"
+          value={formData.name}
+          onChange={handleChange}
+        />
+        {errors.name && <span style={{ color: "red", fontSize: "0.8rem" }}>{errors.name}</span>}
+      </div>
 
-    function handleChange(event) {
-        const { name, value, type, checked } = event.target;
-        
-        setFormData({
-            ...formData,
-            [name]: type === "checkbox" ? checked : value,
-        });
-    }
+      <div className="form-group">
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          placeholder="e.g. john@example.com"
+          type="text"
+          value={formData.email}
+          onChange={handleChange}
+        />
+        {errors.email && <span style={{ color: "red", fontSize: "0.8rem" }}>{errors.email}</span>}
+      </div>
 
-    function validateForm() {
-        const newErrors = {};
+      <div className="form-group">
+        <label htmlFor="specialization">Specialization</label>
+        <input
+          id="specialization"
+          name="specialization"
+          placeholder="e.g. React & Spring Boot"
+          type="text"
+          value={formData.specialization}
+          onChange={handleChange}
+        />
+        {errors.specialization && <span style={{ color: "red", fontSize: "0.8rem" }}>{errors.specialization}</span>}
+      </div>
 
-        if (!formData.name.trim()) {
-            newErrors.name = "Name is required.";
-        }
+      <div className="form-group">
+        <label htmlFor="yearsOfExperience">Years Experience</label>
+        <input
+          id="yearsOfExperience"
+          name="yearsOfExperience"
+          placeholder="e.g. 5"
+          type="number"
+          value={formData.yearsOfExperience}
+          onChange={handleChange}
+        />
+        {errors.yearsOfExperience && <span style={{ color: "red", fontSize: "0.8rem" }}>{errors.yearsOfExperience}</span>}
+      </div>
 
-        if (!formData.email.trim()) {
-            newErrors.email = "Email is required.";
-        } else if (!formData.email.includes("@")) {
-            newErrors.email = "Email must contain an @ symbol.";
-        }
+      <div className="form-group checkbox-group">
+        <label>
+          <input
+            name="active"
+            type="checkbox"
+            checked={formData.active}
+            onChange={handleChange}
+          />
+          Instructor is Active
+        </label>
+      </div>
 
-        if (!formData.specialization.trim()) {
-            newErrors.specialization = "Specialization is required.";
-        }
-
-        if (formData.yearsOfExperience === "" || formData.yearsOfExperience === null) {
-            newErrors.yearsOfExperience = "Years of experience is required.";
-        } else if (Number(formData.yearsOfExperience) < 0) {
-            newErrors.yearsOfExperience = "Years of experience cannot be negative.";
-        }
-
-        setErrors(newErrors);
-
-        return Object.keys(newErrors).length === 0;
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        const instructorToSubmit = {
-            name: formData.name.trim(),
-            email: formData.email.trim(),
-            specialization: formData.specialization.trim(),
-            yearsExperience: Number(formData.yearsOfExperience), 
-            active: formData.active,
-        };
-
-        onSubmit(instructorToSubmit);
-    }
-
-    return (
-        <form className="form" onSubmit={handleSubmit}>
-            
-            <div className="form-group">
-                <label>Name</label>
-                <input
-                    name="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="e.g. John Doe"
-                />
-                {errors.name && <p className="error-message">{errors.name}</p>}
-            </div>
-
-            <div className="form-group">
-                <label>Email</label>
-                <input
-                    name="email"
-                    type="text" 
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="e.g. john@example.com"
-                />
-                {errors.email && <p className="error-message">{errors.email}</p>}
-            </div>
-
-            <div className="form-group">
-                <label>Specialization</label>
-                <input
-                    name="specialization"
-                    type="text"
-                    value={formData.specialization}
-                    onChange={handleChange}
-                    placeholder="e.g. React & Spring Boot"
-                />
-                {errors.specialization && <p className="error-message">{errors.specialization}</p>}
-            </div>
-
-            <div className="form-group">
-                <label>Years Experience</label>
-                <input
-                    name="yearsOfExperience"
-                    type="number"
-                    value={formData.yearsOfExperience}
-                    onChange={handleChange}
-                    placeholder="e.g. 5"
-                />
-                {errors.yearsOfExperience && <p className="error-message">{errors.yearsOfExperience}</p>}
-            </div>
-
-            <div className="form-group checkbox-group">
-                <label>
-                    <input
-                        name="active"
-                        type="checkbox"
-                        checked={formData.active}
-                        onChange={handleChange}
-                    />
-                    Instructor is Active
-                </label>
-            </div>
-
-            <div className="form-actions">
-                <button type="submit">{buttonText}</button>
-
-                <button type="button" onClick={() => navigate("/instructors")}>
-                    Cancel
-                </button>
-            </div>
-            
-        </form>
-    );
+      <div className="form-actions">
+        <button type="submit">Submit</button>
+        <button type="button">Cancel</button>
+      </div>
+    </form>
+  );
 }
 
 export default InstructorForm;
