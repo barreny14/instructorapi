@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.data.domain.Sort;
 
 import org.slf4j.Logger;
@@ -57,14 +58,23 @@ public class InstructorService {
         return instructorRepository.findById(id);
     }
 
+    private static final String DEFAULT_STATUS_ACTIVE = "ACTIVE";
+
     public Instructor createInstructor(CreateInstructorRequest request) {
+        // 1. Defensive Error Handling: Prevent NullPointerExceptions
+        Assert.notNull(request, "CreateInstructorRequest must not be null");
+        Assert.hasText(request.getName(), "Instructor name is required");
+        Assert.hasText(request.getEmail(), "Instructor email is required");
+
+        // 2. Readability: Use constant instead of Magic String
         Instructor instructor = new Instructor(
                 request.getName(),
                 request.getEmail(),
                 request.getSpecialization(),
                 request.getYearsExperience(),
-                "ACTIVE" 
+                DEFAULT_STATUS_ACTIVE 
         );
+        
         return instructorRepository.save(instructor);
     }
 
