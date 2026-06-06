@@ -13,9 +13,9 @@
 
 **Why it is better:** It prevents unexpected 500 Internal Server Errors by catching bad data early, and the use of constants prevents typos and makes the business rules self-documenting.
 
-**How I tested:** [Type how you tested this here! e.g., "I started the Spring Boot server and sent a POST request using Postman" or "I ran my npm run test:e2e command"]
+**How I tested:** I ran the existing Playwright E2E smoke test (`npm run test:e2e`) with both the Spring Boot backend and React frontend running. The test passed successfully, proving the application still communicates properly and the Instructors page loads without crashing. I also manually tested the frontend flow by creating a new instructor in the browser to verify the backend save logic works perfectly.
 
 **Did the behaviour change?**
-Yes / No  [Delete one]
+No
 
-**Evidence:** [Paste a screenshot of your successful Postman request, or copy/paste your green testing terminal output here]
+**Evidence:** 
